@@ -6,6 +6,63 @@ public class Configuration {
     private byte[][] config;
     private StringBuilder board;
 
+    private static final String EMPTY_BOARD =
+        "┏━━━┯━━━┯━━━┳━━━┯━━━┯━━━┳━━━┯━━━┯━━━┓\n" +
+        "┃   │   │   ┃   │   │   ┃   │   │   ┃\n" +
+        "┠───┼───┼───╂───┼───┼───╂───┼───┼───┨\n" +
+        "┃   │   │   ┃   │   │   ┃   │   │   ┃\n" +
+        "┠───┼───┼───╂───┼───┼───╂───┼───┼───┨\n" +
+        "┃   │   │   ┃   │   │   ┃   │   │   ┃\n" +
+        "┣━━━┿━━━┿━━━╋━━━┿━━━┿━━━╋━━━┿━━━┿━━━┫\n" +
+        "┃   │   │   ┃   │   │   ┃   │   │   ┃\n" +
+        "┠───┼───┼───╂───┼───┼───╂───┼───┼───┨\n" +
+        "┃   │   │   ┃   │   │   ┃   │   │   ┃\n" +
+        "┠───┼───┼───╂───┼───┼───╂───┼───┼───┨\n" +
+        "┃   │   │   ┃   │   │   ┃   │   │   ┃\n" +
+        "┣━━━┿━━━┿━━━╋━━━┿━━━┿━━━╋━━━┿━━━┿━━━┫\n" +
+        "┃   │   │   ┃   │   │   ┃   │   │   ┃\n" +
+        "┠───┼───┼───╂───┼───┼───╂───┼───┼───┨\n" +
+        "┃   │   │   ┃   │   │   ┃   │   │   ┃\n" +
+        "┠───┼───┼───╂───┼───┼───╂───┼───┼───┨\n" +
+        "┃   │   │   ┃   │   │   ┃   │   │   ┃\n" +
+        "┗━━━┷━━━┷━━━┻━━━┷━━━┷━━━┻━━━┷━━━┷━━━┛";
+    private static final String HIGHLIGHT_BOX =
+        "▛▀▀▀▀▀▀▀▀▀▀▀▜" +
+        "▌   │   │   ▐" +
+        "▌───┼───┼───▐" +
+        "▌   │   │   ▐" +
+        "▌───┼───┼───▐" +
+        "▌   │   │   ▐" +
+        "▙▄▄▄▄▄▄▄▄▄▄▄▟";
+    private static final String HIGHLIGHT_ROW =
+        "▛▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▜\n" +
+        "▌   │   │   ┃   │   │   ┃   │   │   ▐\n" +
+        "▙▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▟";
+    private static final String HIGHLIGHT_COLUMN =
+        "▛▀▀▀▜\n" +
+        "▌   ▐\n" +
+        "▌───▐\n" +
+        "▌   ▐\n" +
+        "▌───▐\n" +
+        "▌   ▐\n" +
+        "▌━━━▐\n" +
+        "▌   ▐\n" +
+        "▌───▐\n" +
+        "▌   ▐\n" +
+        "▌───▐\n" +
+        "▌   ▐\n" +
+        "▌━━━▐\n" +
+        "▌   ▐\n" +
+        "▌───▐\n" +
+        "▌   ▐\n" +
+        "▌───▐\n" +
+        "▌   ▐\n" +
+        "▙▄▄▄▟";
+    private static final String HIGHLIGHT_CELL =
+        "▛▀▀▀▜" +
+        "▌   ▐" +
+        "▙▄▄▄▟";
+
     /**
      * Sudoku board configuration constructor.
      *
@@ -35,107 +92,117 @@ public class Configuration {
         initBoard();
     }
 
+    // Board Initialisation
     /**
      * Initialise an internal human-friendly representation of the board.
      */
     private void initBoard () {
-        /*
-            Format example:
-            ┏━━━┯━━━┯━━━┳━━━┯━━━┯━━━┳━━━┯━━━┯━━━┓
-            ┃ 𝟣 │   │   ┃   │   │ 𝟨 ┃   │   │ 𝟫 ┃
-            ┠───┼───┼───╂───┼───┼───╂───┼───┼───┨
-            ┃   │   │   ┃ 𝟩 │   │ 𝟫 ┃   │   │   ┃
-            ┠───┼───┼───╂───┼───┼───╂───┼───┼───┨
-            ┃   │ 𝟪 │   ┃   │ 𝟤 │   ┃   │   │   ┃
-            ┣━━━┿━━━┿━━━╋━━━┿━━━┿━━━╋━━━┿━━━┿━━━┫
-            ┃   │   │   ┃   │   │   ┃ 𝟨 │   │   ┃
-            ┠───┼───┼───╂───┼───┼───╂───┼───┼───┨
-            ┃ 𝟥 │ 𝟦 │   ┃ 𝟨 │   │ 𝟪 ┃   │   │   ┃
-            ┠───┼───┼───╂───┼───┼───╂───┼───┼───┨
-            ┃ 𝟨 │   │   ┃   │   │ 𝟤 ┃   │   │ 𝟧 ┃
-            ┣━━━┿━━━┿━━━╋━━━┿━━━┿━━━╋━━━┿━━━┿━━━┫
-            ┃   │   │ 𝟣 ┃   │   │   ┃   │   │ 𝟩 ┃
-            ┠───┼───┼───╂───┼───┼───╂───┼───┼───┨
-            ┃   │   │   ┃ 𝟪 │   │   ┃   │ 𝟥 │   ┃
-            ┠───┼───┼───╂───┼───┼───╂───┼───┼───┨
-            ┃   │   │ 𝟦 ┃   │   │ 𝟩 ┃   │   │   ┃
-            ┗━━━┷━━━┷━━━┻━━━┷━━━┷━━━┻━━━┷━━━┷━━━┛
-         */
         board = new StringBuilder();
-
-        for (int rowBorder = 0; rowBorder < 19; rowBorder++) {
-            for (int colBorder = 0; colBorder < 19; colBorder++) {
-                if (rowBorder%2 == 0) {
-                // Horizontal lines
-                    if (rowBorder == 0) { // Top row
-                        if (colBorder == 0)         board.append('┏');
-                        else if (colBorder == 18)   board.append('┓');
-                        else if (colBorder%6 == 0)  board.append('┳');
-                        else if (colBorder%2 == 0)  board.append('┯');
-                        else                        board.append("━━━");
-                    } else if (rowBorder == 18) { // Bottom row
-                        if (colBorder == 0)         board.append('┗');
-                        else if (colBorder == 18)   board.append('┛');
-                        else if (colBorder%6 == 0)  board.append('┻');
-                        else if (colBorder%2 == 0)  board.append('┷');
-                        else                        board.append("━━━");
-                    } else if (rowBorder%6 == 0) { // 3x3 row
-                        if (colBorder == 0)         board.append('┣');
-                        else if (colBorder == 18)   board.append('┫');
-                        else if (colBorder%6 == 0)  board.append('╋');
-                        else if (colBorder%2 == 0)  board.append('┿');
-                        else                        board.append("━━━");
-                    } else { // Normal row
-                        if (colBorder == 0)         board.append('┠');
-                        else if (colBorder == 18)   board.append('┨');
-                        else if (colBorder%6 == 0)  board.append('╂');
-                        else if (colBorder%2 == 0)  board.append('┼');
-                        else                        board.append("───");
-                    }
-                } else {
-                // Numbers row
-                    if (colBorder%6 == 0) { // 3x3 column
-                        board.append('┃');
-                    } else if (colBorder%2 == 0) { // Normal column
-                        board.append('│');
-                    } else { // Hint number or empty
-                        board.append(' ');
-                        byte hintNumber = config[rowBorder/2][colBorder/2];
-                        if (hintNumber > 0) {
-                            board.append(byteToBoldString(hintNumber));
-                        } else {
-                            board.append(' ');
-                        }
-                        board.append(' ');
-                    }
+        board.append(EMPTY_BOARD);
+        placeHintNumbers();
+    }
+    /**
+     * Place the hint numbers from config to the board.
+     */
+    private void placeHintNumbers () {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (config[i][j] > 0) {
+                    placeNumber(i,j,(int)config[i][j]);
                 }
             }
-            if (rowBorder < 18) board.append('\n');
         }
     }
-
     /**
-     * Takes a byte in the interval [1,9] and converts it into a string of
-     * equivalent value but in bold, e.g. 8 -> 𝟴.
-     * 
-     * Used to distinguish hint numbers from user-filled numbers on the console.
+     * Place the number n on row i, column j to the board.
      *
-     * @param x Byte in the interval [1,9].
-     * @return String that looks like a bold version of x.
+     * @param i Row number (0-8).
+     * @param j Column number (0-8).
+     * @param n Number to put in (1-9).
      */
-    private String byteToBoldString (byte x) {
-        switch (x) {
-            case 1: return "\uD835\uDFE3";
-            case 2: return "\uD835\uDFE4";
-            case 3: return "\uD835\uDFE5";
-            case 4: return "\uD835\uDFE6";
-            case 5: return "\uD835\uDFE7";
-            case 6: return "\uD835\uDFE8";
-            case 7: return "\uD835\uDFE9";
-            case 8: return "\uD835\uDFEA";
-            case 9: return "\uD835\uDFEB";
-        }
-        return "";
+    private void placeNumber (int i, int j, int n) {
+        int index = coordToBoardIndex(i,j);
+        board.replace(index, index + 1, ""+n);
+    }
+    /**
+     * Convert 0-based board indices to index of the corresponding position
+     * in the board StringBuilder.
+     *
+     * @param i Row number (0-8).
+     * @param j Column number (0-8).
+     * @return Board StringBuilder index.
+     */
+    private int coordToBoardIndex (int i, int j) {
+        return 38*(2*i + 1) + (4*j + 2);
+    }
+
+    // Board Highlighting
+    /**
+     * Highlight the b-th box on the board.
+     *
+     * @param b The box to highlight (0-8).
+     */
+    private void highlightBox (int b) {
+
+    }
+    /**
+     * Return the b-th box on the board to the unhighlighted version.
+     *
+     * @param b The box to unhighlight (0-8).
+     */
+    private void unhighlightBox (int b) {
+
+    }
+    /**
+     * Highlight the i-th row on the board.
+     *
+     * @param i The row to highlight (0-8).
+     */
+    private void highlightRow (int i) {
+
+    }
+    /**
+     * Return the i-th row on the board to the unhighlighted version.
+     *
+     * @param i The row to unhighlight (0-8).
+     */
+    private void unhighlightRow (int i) {
+
+    }
+    /**
+     * Highlight the j-th column on the board.
+     *
+     * @param j The column to highlight (0-8).
+     */
+    private void highlightColumn (int j) {
+
+    }
+    /**
+     * Return the j-th column on the board to the unhighlighted version.
+     *
+     * @param j The column to unhighlight (0-8).
+     */
+    private void unhighlightColumn (int j) {
+
+    }
+    /**
+     * Highlight the cell on the i-th row and j-th column on the board.
+     *
+     * @param i The row number (0-8) of the cell to highlight.
+     * @param j The column number (0-8) of the cell to highlight.
+     */
+    private void highlightCell (int i, int j) {
+
+    }
+    /**
+     * Return the cell on the i-th row and the j-th column on the board to
+     * the unhighlighted version.
+     *
+     * @param i The row number (0-8) of the cell to unhighlight.
+     * @param j The column number (0-8) of the cell to unhighlight.
+     */
+    private void unhighlightCell (int i, int j) {
+
     }
 
     /**
@@ -170,7 +237,7 @@ public class Configuration {
 
     /**
      * Prints the board configuration in a human-friendly format.
-     * 
+     *
      * @return String representing the board.
      */
     @Override public String toString () {
