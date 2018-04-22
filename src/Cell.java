@@ -43,11 +43,7 @@ public class Cell {
      * @return hint cell with the given number.
      */
     public static Cell newHint (byte n) {
-        if (n < 1 || n > 9) {
-            throw new IllegalArgumentException(
-                "Hint value must be in the interval [1,9]."
-            );
-        }
+        checkInterval(n);
         return new Cell(Type.HINT, n);
     }
     private Cell (Type type, byte n) {
@@ -79,11 +75,7 @@ public class Cell {
                 "Cannot change a hint cell value."
             );
         }
-        if (n < 1 || n > 9) {
-            throw new IllegalArgumentException(
-                "Value must be in the interval [1,9]."
-            );
-        }
+        checkInterval(n);
         type  = Type.VALUE;
         value = n;
         notes.clear();
@@ -104,20 +96,44 @@ public class Cell {
         notes.clear();
     }
     /**
-     * TODO
+     * Add the specified note to the cell. Works on value, note, and
+     * blank cells.
+     * This method removes the previous cell value (if any).
+     * If called on value or blank cells, the cell will become a note cell.
      *
-     * @param n
+     * @param n byte in the interval [1,9] to be added to the note.
      */
     public void addNote (byte n) {
-
+        if (type == Type.HINT) {
+            throw new IllegalStateException(
+                "Cannot add notes to a hint cell."
+            );
+        }
+        checkInterval(n);
+        type  = Type.NOTE;
+        value = (byte)0;
+        notes.add(n);
     }
     /**
-     * TODO
+     * Remove the specified note. The cell type will be changed to blank
+     * if the removed note is the only note within the cell.
+     * Works on note cells only.
      *
-     * @param n
+     * @throws IllegalStateException if the cell is not a note cell.
+     * @throws IllegalArgumentException if n is not in the interval [1,9].
+     * @param n byte in the interval [1,9] to be removed from the note.
      */
     public void removeNote (byte n) {
-
+        if (type != Type.NOTE) {
+            throw new IllegalStateException(
+                "Cannot clear notes on non-note cells."
+            );
+        }
+        checkInterval(n);
+        notes.remove(n);
+        if (notes.isEmpty()) {
+            type = Type.BLANK;
+        }
     }
     /**
      * Remove the notes and change the cell type to blank.
@@ -144,6 +160,24 @@ public class Cell {
     }
     public Set<Byte> getNotes () {
         return notes;
+    }
+
+    // Utilities
+    private static void checkInterval (byte n) {
+        if (n < 1 || n > 9) {
+            throw new IllegalArgumentException(
+                "Argument must be in the interval [1,9]."
+            );
+        }
+    }
+
+    @Override
+    public String toString () {
+        if (value != (byte)0) {
+            return Byte.toString(value);
+        } else {
+            return " ";
+        }
     }
 
 }
